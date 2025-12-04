@@ -3,6 +3,7 @@ import { createModel } from "./model/helper.ts";
 import type { Message } from "./message.ts";
 import type { Tool } from "./tool.ts";
 import type { Toolset } from "./toolset.ts";
+import { AgentTool } from "./agent_tool.ts";
 
 export interface AgentConfig {
   model?: Model;
@@ -94,11 +95,8 @@ export class Agent {
     return this.#data.messages;
   }
 
-  named(name: string): Tool {
+  named(name: string): AgentTool {
     // Convert this agent into a Tool that can be used by other agents
-    return {
-      name,
-      // TODO: Add agent execution logic
-    };
+    return new AgentTool(this, name);
   }
 }
