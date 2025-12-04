@@ -2,6 +2,7 @@ import type { Model } from "./model/base.ts";
 import { createModel } from "./model/helper.ts";
 import type { Message } from "./message.ts";
 import type { Tool } from "./tool.ts";
+import type { Toolset } from "./toolset.ts";
 
 export interface AgentConfig {
   model?: Model;
@@ -10,7 +11,7 @@ export interface AgentConfig {
   systemPrompt: string;
   temperature?: number;
   maxTokens?: number;
-  tools: Tool[];
+  tools: (Tool | Toolset)[];
   messages: Message[];
 }
 
@@ -77,9 +78,9 @@ export class Agent {
     });
   }
 
-  uses(): Tool[];
-  uses(...toolList: Tool[]): Agent;
-  uses(...toolList: Tool[]): Agent | Tool[] {
+  uses(): (Tool | Toolset)[];
+  uses(...toolList: (Tool | Toolset)[]): Agent;
+  uses(...toolList: (Tool | Toolset)[]): Agent | (Tool | Toolset)[] {
     if (toolList.length === 0) {
       return this.#data.tools;
     }
@@ -91,5 +92,13 @@ export class Agent {
 
   messages(): Message[] {
     return this.#data.messages;
+  }
+
+  named(name: string): Tool {
+    // Convert this agent into a Tool that can be used by other agents
+    return {
+      name,
+      // TODO: Add agent execution logic
+    };
   }
 }
